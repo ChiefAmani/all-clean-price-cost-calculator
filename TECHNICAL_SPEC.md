@@ -1,147 +1,160 @@
-# Technical Specification: Profit Per Job Calculator (Excel)
+# TECHNICAL_SPEC.md - Profit Per Job Calculator
 
-This document outlines the technical specifications for the Excel-based "Profit Per Job Calculator." It details the workbook structure, sheet-specific inputs, calculations, and expected outputs, directly referencing the financial models defined in `FINANCIAL_MODELS.md`.
+## 1. Project Name
+Profit Per Job Calculator
 
-## 1. Workbook Structure
+## 2. File Tree
+.
+|-- TECHNICAL_SPEC.md
+|-- profit_per_job_calculator.xlsx
 
-The Excel workbook `profit_per_job_calculator.xlsx` will consist of the following sheets:
+## 3. Tech Stack
+Microsoft Excel (Version 2016 or newer recommended for full feature compatibility)
 
-*   **Dashboard:** Executive summary and key performance indicators.
-*   **Job Costing:** Detailed calculation of costs and profit for individual jobs.
-*   **Overhead & Break-Even:** Analysis of fixed/variable costs and break-even points.
-*   **Pricing Strategy:** Tools for optimal pricing, including "Are You Undercharging?" and tiered pricing.
-*   **Equipment ROI:** Calculates return on investment for equipment purchases.
-*   **Employee Compensation:** Models various employee payment structures.
-*   **Drive Time & Setup Allocation:** Accounts for unbillable time.
-*   **Automated Pricing Data:** Estimates costs based on service area and productivity.
+## 4. Excel Workbook Structure: profit_per_job_calculator.xlsx
 
-## 2. Sheet-Specific Specifications
+The workbook will consist of several interconnected sheets, each serving a specific function to calculate profitability, track costs, and aid in pricing strategy.
 
-### 2.1. Dashboard
+### 4.1. Sheet: Dashboard Summary
+*   **Purpose:** Provides a high-level overview of key financial metrics and profitability indicators.
+*   **Key Outputs:**
+    *   Average Profit per Job
+    *   Total Monthly Profit (Estimated)
+    *   Break-Even Number of Jobs
+*   **Formulas (Referencing other sheets):**
+    *   Average Profit per Job: = 'Job Costing'!B21 (Example cell reference)
+    *   Total Monthly Profit (Est): = (Dashboard!B3 * Dashboard!B2) - 'Overhead & Break-Even'!B8 (Example cell references)
+    *   Break-Even Number of Jobs: = 'Overhead & Break-Even'!B10 (Example cell reference)
 
-*   **Purpose:** Provide a high-level overview of the business's financial health and key metrics.
-*   **Inputs:** None (all data derived from other sheets).
-*   **Outputs:**
-    *   Average Profit per Job (linked from 'Job Costing')
-    *   Total Monthly Profit (Est) (linked from 'Job Costing' and 'Overhead & Break-Even')
-    *   Break-Even Number of Jobs (linked from 'Overhead & Break-Even')
-*   **Formulas:** As defined in `FINANCIAL_MODELS.md` under "Dashboard Summary".
-
-### 2.2. Job Costing
-
-*   **Purpose:** Calculate the direct costs and gross profit for a single job. This is the core "Profit Per Job" calculation.
-*   **Inputs:**
+### 4.2. Sheet: Job Costing
+*   **Purpose:** Calculates the direct costs and profitability of an individual job, including labor, chemicals, and callback impacts.
+*   **Key Inputs:**
     *   Total Job Price (Revenue)
     *   Estimated Labor Hours
     *   Hourly Labor Rate
-    *   Other Direct Costs (e.g., consumables not chemicals)
+    *   Other Direct Costs (e.g., consumables, specific materials)
     *   Estimated Callback Hours
     *   Callback Hourly Rate
     *   Callback Material Cost
-    *   Total Chemical Cost (can be manually entered or linked from 'Automated Pricing Data')
-*   **Outputs:**
+    *   Total Chemical Cost
+*   **Key Outputs:**
     *   Total Labor Cost
     *   Total Callback Cost
     *   Total Direct Job Cost
     *   Gross Profit per Job
     *   Gross Profit Margin (%)
-*   **Formulas:** As defined in `FINANCIAL_MODELS.md` under "Job Costing".
+*   **Formulas:**
+    *   Total Labor Cost: = [Estimated Labor Hours] * [Hourly Labor Rate]
+    *   Total Callback Cost: = ([Estimated Callback Hours] * [Callback Hourly Rate]) + [Callback Material Cost]
+    *   Total Direct Job Cost: = [Total Labor Cost] + [Total Chemical Cost] + [Other Direct Costs] + [Total Callback Cost]
+    *   Gross Profit per Job: = [Total Job Price] - [Total Direct Job Cost]
+    *   Gross Profit Margin (%): = IF([Total Job Price] > 0, [Gross Profit per Job] / [Total Job Price], 0)
 
-### 2.3. Overhead & Break-Even
-
-*   **Purpose:** Determine the fixed and variable overheads and calculate the break-even point.
-*   **Inputs:**
+### 4.3. Sheet: Overhead & Break-Even
+*   **Purpose:** Determines the number of jobs and revenue required to cover all fixed and variable overhead costs.
+*   **Key Inputs:**
     *   Monthly Fixed Costs (e.g., rent, insurance, software subscriptions)
-    *   Monthly Variable Overhead (e.g., fuel, office supplies)
-    *   Average Direct Cost per Job (linked from 'Job Costing' or user input for estimation)
-    *   Average Revenue per Job (linked from 'Job Costing' or user input for estimation)
-*   **Outputs:**
+    *   Monthly Variable Overhead (e.g., office supplies, marketing spend)
+    *   Average Direct Cost per Job (linked from Job Costing or user input)
+    *   Average Revenue per Job (linked from Job Costing or user input)
+*   **Key Outputs:**
     *   Total Monthly Overhead
     *   Contribution Margin per Job
     *   Break-Even Number of Jobs
     *   Break-Even Revenue
-*   **Formulas:** As defined in `FINANCIAL_MODELS.md` under "Overhead & Break-Even".
+*   **Formulas:**
+    *   Total Monthly Overhead: = [Monthly Fixed Costs] + [Monthly Variable Overhead]
+    *   Contribution Margin per Job: = [Average Revenue per Job] - [Average Direct Cost per Job]
+    *   Break-Even Number of Jobs: = IF([Contribution Margin per Job] > 0, [Total Monthly Overhead] / [Contribution Margin per Job], 0)
+    *   Break-Even Revenue: = [Break-Even Number of Jobs] * [Average Revenue per Job]
 
-### 2.4. Pricing Strategy
-
-*   **Purpose:** Assist in setting profitable prices and identify if current pricing is adequate.
-*   **Inputs:**
+### 4.4. Sheet: Pricing Strategy
+*   **Purpose:** Helps determine if current pricing meets desired margins and generates "Good/Better/Best" pricing tiers. Includes the "Are You Undercharging" calculator.
+*   **Key Inputs:**
     *   Desired Profit Margin (%)
-    *   Total Estimated Job Cost (linked from 'Job Costing' or user input)
-    *   Base Price for Good/Better/Best (user input)
-    *   Markup % for Better Tier (user input)
-    *   Markup % for Best Tier (user input)
-*   **Outputs:**
-    *   Suggested Minimum Profitable Price ("Are You Undercharging?" indicator)
+    *   Total Estimated Job Cost (linked from Job Costing)
+    *   Base Price for Good Tier
+    *   Markup % for Better Tier
+    *   Markup % for Best Tier
+*   **Key Outputs:**
+    *   Suggested Minimum Profitable Price
     *   Good Tier Price
     *   Better Tier Price
     *   Best Tier Price
-*   **Formulas:** As defined in `FINANCIAL_MODELS.md` under "Pricing Strategy".
+*   **Formulas:**
+    *   Suggested Min Profitable Price: = [Total Estimated Job Cost] / (1 - [Desired Profit Margin])
+    *   Good Tier Price: = [Base Price for Good Tier]
+    *   Better Tier Price: = [Base Price for Good Tier] * (1 + [Markup % for Better Tier])
+    *   Best Tier Price: = [Base Price for Good Tier] * (1 + [Markup % for Best Tier])
 
-### 2.5. Equipment ROI
-
-*   **Purpose:** Calculate the return on investment for new equipment purchases.
-*   **Inputs:**
+### 4.5. Sheet: Equipment ROI
+*   **Purpose:** Calculates the return on investment for new equipment purchases.
+*   **Key Inputs:**
     *   Purchase Price
     *   Estimated Lifespan (Years)
     *   Estimated Maintenance Cost (Annual)
     *   Estimated Revenue Increase/Cost Savings per Job
     *   Average Jobs per Month
-*   **Outputs:**
+*   **Key Outputs:**
     *   Monthly Depreciation
     *   Total Annual Cost of Equipment
     *   Jobs to Break Even (ROI)
     *   Time to Break Even (Months)
-*   **Formulas:** As defined in `FINANCIAL_MODELS.md` under "Equipment ROI".
+*   **Formulas:**
+    *   Monthly Depreciation: = [Purchase Price] / ([Estimated Lifespan] * 12)
+    *   Total Annual Cost of Equipment: = ([Purchase Price] / [Estimated Lifespan]) + [Estimated Maintenance Cost]
+    *   Jobs to Break Even (ROI): = IF([Est Revenue Increase/Cost Savings per Job] > 0, [Purchase Price] / [Est Revenue Increase/Cost Savings per Job], 0)
+    *   Time to Break Even (Months): = IF([Average Jobs per Month] > 0, [Jobs to Break Even (ROI)] / [Average Jobs per Month], 0)
 
-### 2.6. Employee Compensation
-
-*   **Purpose:** Model different employee compensation structures and their impact on job profitability.
-*   **Inputs:**
+### 4.6. Sheet: Employee Compensation
+*   **Purpose:** Calculates total labor costs including base pay, commissions, and bonuses.
+*   **Key Inputs:**
     *   Base Hourly Rate
     *   Commission Rate (%)
     *   Performance Bonus Criteria ($)
-    *   Job-specific Revenue (linked from 'Job Costing' or user input)
-*   **Outputs:**
-    *   Total Labor Cost per Job (including commission/bonus)
+    *   Job-specific Revenue (linked from Job Costing)
+    *   Estimated Labor Hours (linked from Job Costing)
+*   **Key Outputs:**
+    *   Total Labor Cost per Job
     *   Net Profit after Employee Compensation
-*   **Formulas:** As defined in `FINANCIAL_MODELS.md` under "Employee Compensation".
+*   **Formulas:**
+    *   Total Labor Cost per Job: = ([Estimated Labor Hours] * [Base Hourly Rate]) + ([Job-specific Revenue] * [Commission Rate]) + [Performance Bonus Criteria]
+    *   Net Profit after Employee Comp: = [Job-specific Revenue] - [Total Labor Cost per Job] - 'Job Costing'!B15 - 'Job Costing'!B7 (Example cell references for Total Direct Job Cost and Total Chemical Cost)
 
-### 2.7. Drive Time & Setup Allocation
-
-*   **Purpose:** Account for unbillable time (drive, setup, teardown) and its cost impact.
-*   **Inputs:**
+### 4.7. Sheet: Drive Time & Setup Allocation
+*   **Purpose:** Factors unbillable time (drive time, setup/teardown) into the job cost.
+*   **Key Inputs:**
     *   Average Drive Time per Job (minutes)
     *   Average Setup/Teardown Time per Job (minutes)
-    *   Hourly Rate for Unbillable Time (e.g., average employee hourly rate)
-*   **Outputs:**
+    *   Hourly Rate for Unbillable Time
+*   **Key Outputs:**
     *   Total Unbillable Time Cost per Job
     *   Recommended Adjustment to Job Price
-*   **Formulas:** As defined in `FINANCIAL_MODELS.md` under "Drive Time & Setup Allocation".
+*   **Formulas:**
+    *   Total Unbillable Time Cost per Job: = (([Average Drive Time per Job] + [Average Setup/Teardown Time per Job]) / 60) * [Hourly Rate for Unbillable Time]
+    *   Recommended Adjustment to Job Price: = [Total Unbillable Time Cost per Job]
 
-### 2.8. Automated Pricing Data
-
-*   **Purpose:** Provide automated estimates for labor and chemical costs based on job parameters.
-*   **Inputs:**
-    *   Service Area Size (e.g., sq ft for house washing, linear ft for gutters)
+### 4.8. Sheet: Automated Pricing Data
+*   **Purpose:** Estimates labor and chemical costs based on service area size and productivity rates, providing a suggested base price.
+*   **Key Inputs:**
+    *   Service Area Size (sq ft)
     *   Number of Cleaners
-    *   Productivity Rate (e.g., sq ft/hr/cleaner)
-    *   Chemical Product Usage Rate (e.g., ml/sq ft)
+    *   Productivity Rate (sq ft/hr/cleaner)
+    *   Chemical Product Usage Rate (ml/sq ft)
     *   Chemical Unit Cost ($/ml)
     *   Desired Chemical Markup (%)
-*   **Outputs:**
+    *   Desired Profit Margin (%) (linked from Pricing Strategy)
+*   **Key Outputs:**
     *   Estimated Labor Hours
     *   Estimated Chemical Cost
-    *   Suggested Base Price (linked to 'Pricing Strategy' desired margin)
-*   **Formulas:** As defined in `FINANCIAL_MODELS.md` under "Automated Pricing Data".
+    *   Suggested Base Price
+*   **Formulas:**
+    *   Estimated Labor Hours: = [Service Area Size] / ([Number of Cleaners] * [Productivity Rate])
+    *   Estimated Chemical Cost: = ([Service Area Size] * [Chemical Product Usage Rate] * [Chemical Unit Cost]) * (1 + [Desired Chemical Markup])
+    *   Suggested Base Price: = ([Estimated Labor Hours] * 'Job Costing'!B5 + [Estimated Chemical Cost]) / (1 - 'Pricing Strategy'!B2) (Example cell references for Hourly Labor Rate and Desired Profit Margin)
 
-## 3. Implementation Details
+## 5. Dependencies
+*   None (Standard Microsoft Excel functionality only).
 
-*   **Cell Referencing:** Formulas will use direct cell references within and between sheets as specified in `FINANCIAL_MODELS.md`.
-*   **Formatting:**
-    *   Input cells will be clearly identifiable (e.g., specific fill color).
-    *   Output cells will be formatted appropriately (currency, percentage, number).
-    *   Headers will be bold and clearly label sections.
-    *   Conditional formatting may be used (e.g., for "Are You Undercharging?" to highlight if profit margin is below desired).
-*   **Data Validation:** Where appropriate, data validation will be used for input cells (e.g., percentage inputs between 0-100%).
-*   **Protection:** Sheets containing formulas will be protected to prevent accidental modification, allowing only input cells to be edited.
+## 6. API Endpoint Signatures
+N/A - This is an Excel workbook, not a web application with API endpoints. The "API" is the defined structure and formulas within the Excel sheets.
